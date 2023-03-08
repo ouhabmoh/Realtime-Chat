@@ -13,6 +13,7 @@ const socket = io();
 // Join chatroom
 socket.emit('joinRoom', {username, room});
 
+// Message from server
 socket.on('message', message =>{
     console.log(message)
     outputMessage(message);
@@ -20,7 +21,12 @@ socket.on('message', message =>{
     chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
-
+// Get room and users
+socket.on('roomUsers', ({ room, users }) => {
+    outputRoomName(room);
+    outputUsers(users);
+  });
+  
 
 /// Message submit
 chatForm.addEventListener('submit', (e) => {
@@ -44,3 +50,27 @@ function outputMessage(message) {
 
     document.querySelector('.chat-messages').appendChild(div);
 }
+
+// Add room name to DOM
+function outputRoomName(room) {
+    roomName.innerText = room;
+  }
+  
+  // Add users to DOM
+  function outputUsers(users) {
+    userList.innerHTML = '';
+    users.forEach((user) => {
+      const li = document.createElement('li');
+      li.innerText = user.username;
+      userList.appendChild(li);
+    });
+  }
+  
+  //Prompt the user before leave chat room
+  document.getElementById('leave-btn').addEventListener('click', () => {
+    const leaveRoom = confirm('Are you sure you want to leave the chatroom?');
+    if (leaveRoom) {
+      window.location = '../index.html';
+    } else {
+    }
+  });
